@@ -16,9 +16,9 @@ public class Scp {
         Scp scp = new Scp();
 
         RmtConnection shellConnection = new RmtConnection();
-        Connection srcConnection = shellConnection.getConnection("10.148.16.240", "dev", "dev");
+        Connection srcConnection = shellConnection.getConnection("hostip", "usrename", "pwd");
         File srcFile = scp.getRemoteFile(srcConnection, "/opt/", "nginx.conf");
-        Connection destConnection = shellConnection.getConnection("10.148.16.27", "root", "root");
+        Connection destConnection = shellConnection.getConnection("hostip", "usrname", "pwd");
         scp.putFile2Remote(destConnection, "/opt/test", srcFile);
 
     }

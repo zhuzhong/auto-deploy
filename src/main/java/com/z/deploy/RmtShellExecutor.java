@@ -69,9 +69,9 @@ public class RmtShellExecutor {
 
     public static void main(String[] args) {
 
-        String usr = "root";
-        String password = "root";
-        String serverIP = "10.148.16.27";
+        String usr = "username";
+        String password = "pwd";
+        String serverIP = "hostip";
         // String shPath = "/root/ab.sh";
 
         RmtShellExecutor exe = new RmtShellExecutor();
