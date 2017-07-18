@@ -39,15 +39,18 @@ public class SvnFileDownloadServiceImpl implements FileDownloadService {
     /**
      * 上传模型
      * 
-     * @param dirPath
+     * 
      */
-    public void uploadMoel(String dirPath, String modelName) {
+    private void uploadMoel(String srcPath,String svnDestpath, String fileName) {
         setUpSVNClient(userName, passwd);
-        File impDir = new File(dirPath);
+        File impDir = new File(srcPath);
         SVNCommitClient commitClient = ourClientManager.getCommitClient();
         commitClient.setIgnoreExternals(false);
         try {
-            repositoryOptUrl = SVNURL.parseURIEncoded(RepositoryInfo.buffUrl + modelName);
+        	if(!svnDestpath.endsWith("/")){
+        		svnDestpath+="/";
+        	}
+            repositoryOptUrl = SVNURL.parseURIEncoded(svnDestpath + fileName);
             commitClient.doImport(impDir, repositoryOptUrl, "import operation!", null, true, true, SVNDepth.INFINITY);
         } catch (SVNException e) {
             // TODO Auto-generated catch block
@@ -81,7 +84,6 @@ public class SvnFileDownloadServiceImpl implements FileDownloadService {
             updateClient.doExport(repositoryOptUrl, outDir, SVNRevision.HEAD, SVNRevision.HEAD, "downloadModel", true,
                     SVNDepth.FILES);
         } catch (SVNException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -92,18 +94,17 @@ public class SvnFileDownloadServiceImpl implements FileDownloadService {
     /**
      * 删除模型
      */
-    public void deleteModel(String deleteModelName) {
+    private void deleteModel(String svnFilepath,String deleteModelName) {
         setUpSVNClient(userName, passwd);
         SVNCommitClient commitClient = ourClientManager.getCommitClient();
         commitClient.setIgnoreExternals(false);
 
         try {
-            repositoryOptUrl = SVNURL.parseURIEncoded(RepositoryInfo.storeUrl + deleteModelName);
+            repositoryOptUrl = SVNURL.parseURIEncoded(svnFilepath + deleteModelName);
             SVNURL deleteUrls[] = new SVNURL[1];
             deleteUrls[0] = repositoryOptUrl;
             commitClient.doDelete(deleteUrls, "delete model");
         } catch (SVNException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -112,14 +113,14 @@ public class SvnFileDownloadServiceImpl implements FileDownloadService {
     /**
      * 移动模型
      */
-    public void moveModel(String modelName) {
+    private void moveModel(String srcSvnFilePath,String desSvnFilePath,String modelName) {
         setUpSVNClient(userName, passwd);
         SVNCopyClient copyClient = ourClientManager.getCopyClient();
         copyClient.setIgnoreExternals(false);
 
         try {
-            repositoryOptUrl = SVNURL.parseURIEncoded(RepositoryInfo.buffUrl + modelName);
-            SVNURL destUrl = SVNURL.parseURIEncoded(RepositoryInfo.storeUrl + modelName);
+            repositoryOptUrl = SVNURL.parseURIEncoded(srcSvnFilePath + modelName);
+            SVNURL destUrl = SVNURL.parseURIEncoded(desSvnFilePath + modelName);
             SVNCopySource[] copySources = new SVNCopySource[1];
             copySources[0] = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, repositoryOptUrl);
 
